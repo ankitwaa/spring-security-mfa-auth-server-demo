@@ -1,5 +1,6 @@
 package com.example.springsecuritymfaauthserverdemo.service.impl;
 
+import com.example.springsecuritymfaauthserverdemo.repo.UserGrantRepository;
 import com.example.springsecuritymfaauthserverdemo.repo.UserRepository;
 import com.example.springsecuritymfaauthserverdemo.repo.UserTokenRepositories;
 import com.example.springsecuritymfaauthserverdemo.repo.entity.GrantAuthority;
@@ -24,8 +25,14 @@ import java.util.stream.Collectors;
 public class UserDetailServiceImpl implements UserDetailService {
 
     private UserRepository userRepository;
+    private UserGrantRepository userGrantRepository;
     private UserTokenRepositories userTokenRepositories;
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public void setUserGrantRepository(UserGrantRepository userGrantRepository) {
+        this.userGrantRepository = userGrantRepository;
+    }
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -69,18 +76,19 @@ public class UserDetailServiceImpl implements UserDetailService {
 
     @Override
     public boolean addUsers(String username, String password, String mobileNumber, List<String> authorities) {
-        UserDetail userDetail = UserDetail.builder().username(username).password(password).mobile(mobileNumber)
+        UserDetail userDetail = UserDetail.builder().username(username).password(passwordEncoder.encode(password)).mobile(mobileNumber)
                 .accountLocked("N")
                 .accountNotExpired("N")
                 .credentialExpired("N")
-                .enabled("Y")
-                .authorities(authorities.stream().map((s) -> {
-                    GrantAuthority grantAuthority = new GrantAuthority();
-                    grantAuthority.setAuthority(s);
-                    grantAuthority.setUsername(username);
-                    return grantAuthority;
-                }).collect(Collectors.toList())).build();
+                .enabled("Y").build();
         userRepository.save(userDetail);
+        List<GrantAuthority> grantAuthorityList = authorities.stream().map(auth -> {
+            GrantAuthority grantAuthority = new GrantAuthority();
+            grantAuthority.setAuthority(auth);
+            grantAuthority.setUsername(username);
+            return grantAuthority;
+        }).collect(Collectors.toList());
+        userGrantRepository.saveAll(grantAuthorityList);
         return true;
     }
 

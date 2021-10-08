@@ -1,6 +1,7 @@
 package com.example.springsecuritymfaauthserverdemo.repo.entity;
 
 import lombok.Builder;
+import org.hibernate.annotations.Formula;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
