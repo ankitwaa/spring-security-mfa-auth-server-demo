@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import javax.security.auth.login.CredentialException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,6 +57,7 @@ public class UserDetailServiceImpl implements UserDetailService {
     public boolean authenticate(String username, String password) throws CredentialException {
         UserDetail userDetail = userRepository.findByUsername(username);
         if (passwordEncoder.matches(password, userDetail.getPassword())) {
+            generateToken(username);
             return true;
         } else {
             throw new BadCredentialsException("Bad Credential Exception");
@@ -76,11 +76,14 @@ public class UserDetailServiceImpl implements UserDetailService {
 
     @Override
     public boolean addUsers(String username, String password, String mobileNumber, List<String> authorities) {
-        UserDetail userDetail = UserDetail.builder().username(username).password(passwordEncoder.encode(password)).mobile(mobileNumber)
-                .accountLocked("N")
-                .accountNotExpired("N")
-                .credentialExpired("N")
-                .enabled("Y").build();
+        UserDetail userDetail = new UserDetail();
+        userDetail.setUsername(username);
+        userDetail.setPassword(passwordEncoder.encode(password));
+        userDetail.setMobile(mobileNumber);
+        userDetail.setEnabled("Y");
+        userDetail.setAccountLocked("N");
+        userDetail.setAccountNotExpired("N");
+        userDetail.setCredentialExpired("N");
         userRepository.save(userDetail);
         List<GrantAuthority> grantAuthorityList = authorities.stream().map(auth -> {
             GrantAuthority grantAuthority = new GrantAuthority();
