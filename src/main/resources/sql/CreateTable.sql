@@ -3,7 +3,7 @@
 CREATE TABLE IF NOT EXISTS user_details (
 id bigserial primary key,
 username VARCHAR(45) NOT NULL,
-password VARCHAR(45) NOT NULL,
+password VARCHAR(100) NOT NULL,
 mobile VARCHAR(10) NOT NULL,
 is_account_expired VARCHAR(5),
 is_account_locked VARCHAR(5),
