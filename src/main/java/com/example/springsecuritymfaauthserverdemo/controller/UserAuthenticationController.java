@@ -51,7 +51,7 @@ public class UserAuthenticationController {
 
     @PostMapping("/user/add/")
     public ResponseEntity<AuthenticationResult> validateToken(@RequestBody AddUserRequest addUserRequest) throws CredentialException {
-        boolean success = userDetailService.addUsers(addUserRequest.getUsername(), addUserRequest.getPassword(), addUserRequest.getMobileNumber(), addUserRequest.getAuthorities());
+        boolean success = userDetailService.addUsers(addUserRequest.getUsername(), addUserRequest.getPassword(), addUserRequest.getMobile(), addUserRequest.getAuthorities());
         AuthenticationResult authenticationResult = new AuthenticationResult();
         if(success){
             authenticationResult.setMessage("Authenticated!");

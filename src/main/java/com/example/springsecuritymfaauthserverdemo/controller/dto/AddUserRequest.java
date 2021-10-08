@@ -8,7 +8,7 @@ import java.util.List;
 public class AddUserRequest {
     private String username;
     private String password;
-    private String mobileNumber;
+    private String mobile;
     private String enabled;
     private String passwordExpired;
     private String accountExpired;
