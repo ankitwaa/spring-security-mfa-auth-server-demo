@@ -17,8 +17,6 @@ import javax.security.auth.login.CredentialException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Random;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,9 +49,9 @@ public class UserDetailServiceImpl implements UserDetailService {
     @Override
     public boolean authenticate(String username, String password) throws CredentialException {
         UserDetail userDetail = userRepository.findByUsername(username);
-        if(passwordEncoder.matches(password, userDetail.getPassword())){
+        if (passwordEncoder.matches(password, userDetail.getPassword())) {
             return true;
-        }else{
+        } else {
             throw new BadCredentialsException("Bad Credential Exception");
         }
     }
@@ -61,9 +59,9 @@ public class UserDetailServiceImpl implements UserDetailService {
     @Override
     public boolean validatedToken(String username, String token) throws CredentialException {
         OtpDetail otpDetail = userTokenRepositories.findByUsername(username).orElseThrow(() -> new BadCredentialsException("Bad Credential Exception"));
-        if(token.equalsIgnoreCase(otpDetail.getOtp())){
+        if (token.equalsIgnoreCase(otpDetail.getOtp())) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -87,12 +85,12 @@ public class UserDetailServiceImpl implements UserDetailService {
             SecureRandom secureRandom = SecureRandom.getInstanceStrong();
             String token = String.valueOf(secureRandom.nextInt(9000) + 1000);
 
-            OtpDetail  otpDetail = userTokenRepositories.findByUsername(username).orElse(new OtpDetail());
+            OtpDetail otpDetail = userTokenRepositories.findByUsername(username).orElse(new OtpDetail());
             otpDetail.setOtp(token);
             otpDetail.setUsername(username);
             otpDetail.setValid_dtm(LocalDateTime.now().plusMinutes(30));
             userTokenRepositories.save(otpDetail);
-        }catch (Exception exception){
+        } catch (Exception exception) {
             throw new RuntimeException("Error While Generating OTP for user -" + username);
         }
         return true;
