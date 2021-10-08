@@ -17,6 +17,7 @@ import javax.security.auth.login.CredentialException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,9 +68,13 @@ public class UserDetailServiceImpl implements UserDetailService {
     }
 
     @Override
-    public boolean addUsers(String username, String password, String mobileNumber, String... authorities) {
+    public boolean addUsers(String username, String password, String mobileNumber, List<String> authorities) {
         UserDetail userDetail = UserDetail.builder().username(username).password(password).mobile(mobileNumber)
-                .authorities(Arrays.stream(authorities).map((s) -> {
+                .accountLocked("N")
+                .accountNotExpired("N")
+                .credentialExpired("N")
+                .enabled("Y")
+                .authorities(authorities.stream().map((s) -> {
                     GrantAuthority grantAuthority = new GrantAuthority();
                     grantAuthority.setAuthority(s);
                     grantAuthority.setUsername(username);
