@@ -7,11 +7,13 @@ import com.example.springsecuritymfaauthserverdemo.repo.entity.GrantAuthority;
 import com.example.springsecuritymfaauthserverdemo.repo.entity.OtpDetail;
 import com.example.springsecuritymfaauthserverdemo.repo.entity.UserDetail;
 import com.example.springsecuritymfaauthserverdemo.service.UserDetailService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.CredentialException;
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class UserDetailServiceImpl implements UserDetailService {
 
@@ -107,6 +110,7 @@ public class UserDetailServiceImpl implements UserDetailService {
             otpDetail.setValid_dtm(LocalDateTime.now().plusMinutes(30));
             userTokenRepositories.save(otpDetail);
         } catch (Exception exception) {
+            log.error(exception.getMessage(), exception);
             throw new RuntimeException("Error While Generating OTP for user -" + username);
         }
         return true;

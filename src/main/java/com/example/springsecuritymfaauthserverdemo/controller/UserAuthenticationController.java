@@ -5,6 +5,7 @@ import com.example.springsecuritymfaauthserverdemo.controller.dto.AuthenticateUs
 import com.example.springsecuritymfaauthserverdemo.controller.dto.AuthenticationRequest;
 import com.example.springsecuritymfaauthserverdemo.controller.dto.AuthenticationResult;
 import com.example.springsecuritymfaauthserverdemo.service.UserDetailService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.security.auth.login.CredentialException;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 public class UserAuthenticationController {
 
@@ -27,6 +29,7 @@ public class UserAuthenticationController {
 
     @PostMapping("/user/authenticate")
     public ResponseEntity<AuthenticationResult> authenticate(@RequestBody AuthenticationRequest authenticationRequest) throws CredentialException {
+       log.info("Request request for authentication:{}", authenticationRequest);
        boolean success = userDetailService.authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
        AuthenticationResult authenticationResult = new AuthenticationResult();
        if(success){
